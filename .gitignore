@@ -1,0 +1,14 @@
+node_modules/
+.env
+npm-debug.log*
+.npm-cache/
+frontend/.next/
+coverage/
+dist/
+*.log
+server*.out.log
+server*.err.log
+ui*.out.log
+ui*.err.log
+tmp_fork*.js
+.idea/
