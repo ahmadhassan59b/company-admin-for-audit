@@ -1,311 +1,183 @@
-# HubSpot Audit Tool Backend
+# HubAudit Company Admin Dashboard
 
-Backend MVP for connecting a HubSpot account with OAuth, fetching core CRM configuration, normalizing the data, running a rules-based audit, and storing audit runs in PostgreSQL.
+HubAudit connects to HubSpot, stores tenant and audit data in PostgreSQL, and exposes a company admin dashboard for managing customers, selected packages, billing, revenue, expiring packages, new customers, pending payments, and audit activity.
+
+The active browser entry point is the company dashboard:
+
+```text
+http://localhost:3001/admin
+```
+
+Legacy `/dashboard/...` UI routes redirect to `/admin`.
 
 ## Stack
 
-- Node.js 18+
+- Node.js 24 in Docker, Node.js 18+ for local development
 - Express
-- Axios
-- PostgreSQL
-- dotenv
+- PostgreSQL 17
+- Chart.js
+- Docker Compose
+- HubSpot OAuth
 
-## Local Setup
+## Run With Docker Compose
 
-### Option A — Docker Compose (recommended)
+1. Copy the environment template:
 
-```bash
-cp .env.example .env
-# Fill in HubSpot credentials in .env
-
-docker compose -f compose-local.yml up --build
+```powershell
+copy .env.example .env
 ```
 
-Open `http://localhost:3001`. See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for production deployment and Docker Hub setup.
+2. Fill the required values in `.env`:
 
-### Option B — Node.js on the host
-
-1. Install dependencies:
-
-```bash
-npm install
-```
-
-2. Create a PostgreSQL database:
-
-```bash
-createdb hubspot_audit_tool
-```
-
-3. Create your environment file:
-
-```bash
-cp .env.example .env
-```
-
-4. Fill in `.env` with your HubSpot app credentials and database URL.
-
-5. Run migrations:
-
-```bash
-npm run migrate
-```
-
-6. Start the server:
-
-```bash
-npm run dev
-```
-
-For production-style startup:
-
-```bash
-npm start
-```
-
-## Environment Variables
-
-Required:
-
-- `PORT`
-- `APP_BASE_URL`
+- `POSTGRES_DB`
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
 - `HUBSPOT_CLIENT_ID`
 - `HUBSPOT_CLIENT_SECRET`
 - `HUBSPOT_REDIRECT_URI`
-- `DATABASE_URL`
+- `TOKEN_ENCRYPTION_KEY`
+- `AUTH_JWT_SECRET`
 
-Optional:
+3. Start Docker Desktop.
 
-- `INTERNAL_ACCOUNT_KEY`: defaults to `default-team`
-- `TOKEN_ENCRYPTION_KEY`: used to encrypt stored OAuth tokens. If omitted, the app derives the encryption key from `HUBSPOT_CLIENT_SECRET`.
-- `HUBSPOT_SCOPES`: defaults to `crm.objects.contacts.read crm.objects.companies.read crm.objects.deals.read crm.schemas.contacts.read crm.schemas.companies.read crm.schemas.deals.read forms oauth`
-- `HUBSPOT_OPTIONAL_SCOPES`: defaults to `automation`
-- `GOOGLE_CLIENT_ID`: enables the Google sign-in button on the login page. Add your frontend origin in Google Cloud Console as an authorized JavaScript origin.
-- `EMAIL_FROM`: sender address for verification emails, for example `HubAudit <no-reply@your-domain.com>`
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`: SMTP settings used to send verification emails. For Gmail SSL, use `SMTP_PORT=465` and `SMTP_SECURE=true`.
-- `EMAIL_VERIFICATION_TOKEN_TTL_MINUTES`: verification link lifetime, defaults to `60`
-- `OPENAI_API_KEY`: enables Phase 3 AI analysis (optional)
-- `OPENAI_MODEL`: defaults to `gpt-5.4-mini`
+4. Run the app:
 
-## HubSpot Redirect URI
+```powershell
+docker compose up --build
+```
 
-In your HubSpot developer app settings, set the redirect URL to match:
+5. Open:
 
 ```text
-http://localhost:3000/auth/hubspot/callback
+http://localhost:3001/admin
 ```
 
-That value must exactly match `HUBSPOT_REDIRECT_URI` in `.env`.
+Services:
 
-For deployed environments, use your public base URL:
+- UI: `http://localhost:3001`
+- Backend API: `http://localhost:3000`
+- PostgreSQL: `localhost:5432`
 
-```text
-https://your-domain.com/auth/hubspot/callback
+Useful commands:
+
+```powershell
+docker compose ps
+docker compose logs -f
+docker compose down
 ```
 
-## OAuth Flow Test
+## Run Without Docker
 
-1. Start the server.
+Use this when you already have PostgreSQL running locally.
 
-2. Open this URL in a browser:
-
-```text
-http://localhost:3000/auth/hubspot
-```
-
-3. Complete the HubSpot install flow.
-
-4. HubSpot redirects back to `/auth/hubspot/callback`; the backend exchanges the code for tokens, encrypts them, and stores them in `hubspot_connections`.
-
-You can also pass a future tenant key:
-
-```text
-http://localhost:3000/auth/hubspot?accountKey=team-a
-```
-
-## API Calls
-
-Health check:
-
-```bash
-curl http://localhost:3000/health
-```
-
-Run an audit for the default internal account:
-
-```bash
-curl -X POST http://localhost:3000/audit/run \
-  -H "Content-Type: application/json" \
-  -d "{}"
-```
-
-Run the Phase 1 deterministic report audit:
-
-```bash
-curl -X POST http://localhost:3000/api/audit/run \
-  -H "Content-Type: application/json" \
-  -d "{}"
-```
-
-Run the Phase 1 report audit + optional AI analysis (requires `OPENAI_API_KEY`):
-
-```bash
-curl -X POST "http://localhost:3000/api/audit/run?ai=true" \
-  -H "Content-Type: application/json" \
-  -d "{}"
-```
-
-Get a saved Phase 1 report:
-
-```bash
-curl http://localhost:3000/api/audit/1
-```
-
-Run an audit for a specific internal account key:
-
-```bash
-curl -X POST http://localhost:3000/audit/run \
-  -H "Content-Type: application/json" \
-  -d "{\"accountKey\":\"team-a\"}"
-```
-
-## Audit Response Shape
-
-```json
-{
-  "data": {
-    "healthScore": 72,
-    "summary": {
-      "pipelineCount": 4,
-      "workflowCount": 12,
-      "formCount": 6,
-      "contactPropertyCount": 85,
-      "dealPropertyCount": 48
-    },
-    "issues": [
-      {
-        "severity": "high",
-        "category": "workflows",
-        "title": "Workflows appear inactive or disabled",
-        "detail": "5 workflows are disabled or archived."
-      }
-    ],
-    "recommendations": [
-      {
-        "priority": "high",
-        "title": "Review inactive workflows",
-        "detail": "Disable, delete, or consolidate workflows with no recent activity or clear owner."
-      }
-    ]
-  }
-}
-```
-
-A standalone sample is available at `docs/sample-audit-response.json`.
-
-## HubSpot Endpoint Choices
-
-The backend isolates each HubSpot domain behind a service module so endpoints can be swapped without touching the audit engine.
-
-Current choices:
-
-- Deal pipelines: `GET /crm/v3/pipelines/deals`
-- Workflows: `GET /automation/v4/flows`
-- Forms: `GET /marketing/v3/forms`
-- Contact properties: `GET /crm/v3/properties/contacts`
-- Deal properties: `GET /crm/v3/properties/deals`
-- OAuth token exchange and refresh: `POST /oauth/v3/token`
-- Token metadata: `GET /oauth/v1/access-tokens/{accessToken}`
-
-Notes:
-
-- HubSpot Workflows v4 is currently documented as beta and requires the `automation` OAuth scope.
-- HubSpot Forms v3 requires the `forms` OAuth scope.
-- Pagination is handled for endpoints that return `results` and `paging.next.after`.
-
-## Database
-
-Migration files live in `src/db/migrations`.
-
-Tables:
-
-- `hubspot_connections`: one row per internal account/team key, with encrypted access and refresh tokens.
-- `audit_runs`: stores each audit result and summary JSON for historical inspection.
-- `clients`: Phase 1 client records linked to the HubSpot portal.
-- `audits`: Phase 1 audit score and waste estimate rows.
-- `audit_results`: Phase 1 snapshot, rules, and final report JSON.
-
-Run migrations with:
-
-```bash
+```powershell
+npm install
 npm run migrate
 ```
 
-## Minimal Frontend
+Start the backend:
 
-The Phase 1 report viewer lives in `frontend/`.
+```powershell
+npm start
+```
 
-```bash
-cd frontend
-npm install
-npm run dev
+Start the UI server in another terminal:
+
+```powershell
+$env:UI_PORT='3001'
+$env:API_BASE_URL='http://127.0.0.1:3000'
+npm run ui
 ```
 
 Open:
 
 ```text
-http://localhost:3001/audit/1
+http://localhost:3001/admin
 ```
 
-In this workspace, ports `3001` and `3002` were already occupied, so the current local frontend is running on:
+## Environment Variables
+
+Required application values:
+
+- `PORT`
+- `APP_BASE_URL`
+- `FRONTEND_BASE_URL`
+- `HUBSPOT_CLIENT_ID`
+- `HUBSPOT_CLIENT_SECRET`
+- `HUBSPOT_REDIRECT_URI`
+- `DATABASE_URL`
+- `TOKEN_ENCRYPTION_KEY`
+- `AUTH_JWT_SECRET`
+
+Docker Compose values:
+
+- `POSTGRES_DB`
+- `POSTGRES_USER`
+- `POSTGRES_PASSWORD`
+- `POSTGRES_PORT`
+- `BACKEND_PORT`
+- `UI_PORT`
+- `ADMIN_DASHBOARD_REQUIRE_AUTH`
+
+Important production settings:
+
+- `NODE_ENV=production`
+- `ADMIN_DASHBOARD_REQUIRE_AUTH=true`
+- Use strong unique values for `TOKEN_ENCRYPTION_KEY`, `AUTH_JWT_SECRET`, and `POSTGRES_PASSWORD`.
+- Do not expose PostgreSQL directly to the public internet.
+
+## HubSpot Redirect URI
+
+For local development, configure this URL in your HubSpot developer app:
 
 ```text
-http://localhost:3100
+http://localhost:3000/auth/hubspot/callback
 ```
 
-## SaaS-Style Local Flow
+That value must match `HUBSPOT_REDIRECT_URI` in `.env`.
 
-The frontend supports a SaaS-style flow with local email/password auth:
-
-1. Open:
+For production, use your public domain:
 
 ```text
-http://localhost:3100
+https://your-domain.com/auth/hubspot/callback
 ```
 
-2. Create an account or log in.
+## Company Admin Dashboard
 
-3. If you create a new account, the app sends a verification email and keeps the account pending until the link is clicked.
-
-4. Open the verification link at `/verify-email?token=...`.
-
-5. Log in after verification.
-
-6. Open the dashboard.
-
-7. Click **Connect HubSpot**.
-
-8. Complete OAuth.
-
-9. The backend stores HubSpot tokens under your tenant.
-
-10. Click **Run Audit**.
-
-11. The frontend calls:
+The admin UI reads live data from PostgreSQL through:
 
 ```text
-POST http://localhost:3000/api/audit/run
+GET /api/admin/dashboard
 ```
 
-with your bearer token, then redirects to:
+The dashboard uses these tables:
 
-```text
-http://localhost:3100/audit/:id
-```
+- `tenants`
+- `users`
+- `audits`
+- `audit_packages`
+- `customer_subscriptions`
+- `billing_invoices`
+- `billing_payments`
 
-The old browser-generated `clientKey` flow is still supported for migration. If a user signs up from a browser that already has a Phase 1 `clientKey`, the backend attempts to migrate that HubSpot connection to the new tenant.
+The dashboard displays:
 
-Phase 2 local auth endpoints:
+- total customers
+- active customers
+- selected plans
+- customers by plan
+- revenue this month
+- monthly recurring revenue
+- expiring packages
+- new customers
+- pending payments
+- audit count and average score
+
+In local development, `ADMIN_DASHBOARD_REQUIRE_AUTH=false` allows local preview from localhost. In production, set `ADMIN_DASHBOARD_REQUIRE_AUTH=true`.
+
+## API Auth
+
+Auth endpoints:
 
 ```text
 POST /api/auth/register
@@ -313,54 +185,116 @@ POST /api/auth/login
 POST /api/auth/resend-verification
 GET /api/auth/verify-email
 GET /api/auth/me
-GET /api/hubspot/connect-url
 ```
 
-Protected audit endpoints accept:
+Protected requests use:
 
 ```text
 Authorization: Bearer <token>
 ```
 
+Audit run and report JSON routes require authentication:
+
+```text
+POST /api/audit/run
+GET /api/audit/:id
+GET /api/audit/:id/summary
+GET /api/audit/:id/object/:objectType
+GET /api/audit/:id/details/:section
+GET /api/audit/portal/:portalId/latest
+```
+
+Health endpoints are public:
+
+```text
+GET /health
+GET /health/version
+GET /health/details
+```
+
+## Database
+
+Migration files live in:
+
+```text
+src/db/migrations
+```
+
+Run migrations manually with:
+
+```powershell
+npm run migrate
+```
+
+The Docker backend service runs migrations before starting the API.
+
+## Docker Hub Deployment
+
+Create two Docker Hub repositories:
+
+- `hubaudit-backend`
+- `hubaudit-ui`
+
+Build rules:
+
+- Backend Dockerfile: `Dockerfile.backend`
+- UI Dockerfile: `Dockerfile.ui`
+- Build context: `/`
+
+Remote deployment can use:
+
+```bash
+DOCKERHUB_NAMESPACE=your-dockerhub-user IMAGE_TAG=latest docker compose -f compose.prod.yml up -d
+```
+
+See [docs/DOCKER_DEPLOYMENT.md](docs/DOCKER_DEPLOYMENT.md) for the deployment runbook.
+
+## Security Notes
+
+- `.env` is ignored by git and is not copied into Docker images.
+- Admin dashboard data is auth-protected in production.
+- Audit run and audit report JSON endpoints require authentication.
+- HubSpot OAuth tokens are encrypted before storage.
+- Browser auth tokens are currently stored in `localStorage`; moving sessions to `HttpOnly; Secure; SameSite` cookies is recommended before a high-risk public launch.
+- Run a senior/security review before exposing the app publicly.
+
 ## Project Structure
 
 ```text
+compose.yml
+compose.prod.yml
+Dockerfile.backend
+Dockerfile.ui
+scripts/
+  ui-server.js
+  migrate.js
 src/
   app.js
   server.js
   config/
-    env.js
-    db.js
-  routes/
-    auth.routes.js
-    audit.routes.js
-    health.routes.js
   controllers/
-    auth.controller.js
-    audit.controller.js
+  db/migrations/
+  middleware/
+  routes/
   services/
-    hubspot/
-      oauth.service.js
-      token.service.js
-      pipelines.service.js
-      workflows.service.js
-      forms.service.js
-      properties.service.js
-    audit/
-      normalize.service.js
-      score.service.js
-      audit.service.js
-  db/
-    migrations/
-  utils/
-    logger.js
-    errors.js
+ui-admin/
+  index.html
+  admin.css
+  admin.js
+ui-static/
+  login.html
+  audit.html
+  styles.css
+frontend/
+  legacy Next.js frontend
 ```
 
 ## Source References
 
+- Docker Compose: https://docs.docker.com/compose/
+- Docker Hub: https://hub.docker.com/
+- HubSpot OAuth v3: https://developers.hubspot.com/docs/api-reference/auth-oauth-v3/guide
 - HubSpot Workflows v4 API: https://developers.hubspot.com/docs/api-reference/automation-automation-v4-v4/guide
 - HubSpot Forms v3 API: https://developers.hubspot.com/docs/api-reference/marketing-forms-v3/forms/post-marketing-v3-forms-
 - HubSpot Pipelines API: https://developers.hubspot.com/docs/api-reference/latest/crm/pipelines/guide
 - HubSpot Properties API: https://developers.hubspot.com/docs/api-reference/latest/crm/properties/get-properties
-- HubSpot OAuth v3: https://developers.hubspot.com/docs/api-reference/auth-oauth-v3/guide
