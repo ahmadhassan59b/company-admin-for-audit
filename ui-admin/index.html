@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      document.documentElement.classList.add('app-loading');
+    </script>
+    <title>Admin Dashboard | HubAudit</title>
+    <link rel="icon" href="/static/logo-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/admin-static/admin.css" />
+    <script src="/static/vendor/chart.umd.js" defer></script>
+    <script src="/admin-static/admin.js" defer></script>
+  </head>
+  <body class="adminApp">
+    <a class="skipLink" href="#main">Skip to content</a>
+    <nav class="topNav">
+      <div class="container topNavInner">
+        <a class="brand" href="/admin">
+          <img class="brandLogo" src="/static/logo-mark.svg" alt="HubAudit" />
+          <span class="brandWord"><span class="hub">Hub</span><span class="audit">Audit</span></span>
+        </a>
+        <div class="navLinks">
+          <a class="navLink active" href="/admin">Company dashboard</a>
+        </div>
+        <div class="navActions">
+          <button class="helpLink" type="button" id="refreshAdminBtn">
+            <span>Refresh</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container dashboardShell" id="main">
+      <div class="dashboardGrid adminDashboardGrid" style="margin-top:18px">
+        <aside class="dashboardSidebar card">
+          <div class="dashboardSidebarSection">
+            <div class="dashboardSidebarTitle">Company Admin</div>
+            <a class="dashboardNavItem active" href="#customers"><span>Customers</span></a>
+            <a class="dashboardNavItem" href="#packages"><span>Packages</span></a>
+            <a class="dashboardNavItem" href="#billing"><span>Billing</span></a>
+            <a class="dashboardNavItem" href="#audit-analytics"><span>Audits</span></a>
+            <a class="dashboardNavItem" href="#admin-settings"><span>Settings</span></a>
+          </div>
+        </aside>
+
+        <section class="dashboardMain stack">
+          <div class="dashboardHeaderStrip card">
+            <div class="dashboardHeaderCopy">
+              <h1 class="heroTitle">Company Dashboard</h1>
+              <div class="muted">Customers, audit usage, packages, revenue, and payment follow-up in one view.</div>
+            </div>
+            <div class="adminSourceBadge" id="adminSourceBadge">Database: loading</div>
+          </div>
+
+          <p class="alert" id="adminErrorBox" style="display:none"></p>
+
+          <section class="adminMetricGrid" aria-label="Dashboard summary">
+            <div class="adminMetricCard card"><span>Total Customers</span><strong id="metricTotalCustomers">0</strong></div>
+            <div class="adminMetricCard card"><span>Active Customers</span><strong id="metricActiveCustomers">0</strong></div>
+            <div class="adminMetricCard card"><span>Expiring This Month</span><strong id="metricExpiringThisMonth">0</strong></div>
+            <div class="adminMetricCard card"><span>Revenue This Month</span><strong id="metricRevenueThisMonth">$0</strong></div>
+            <div class="adminMetricCard card"><span>Pending Payments</span><strong id="metricPendingPayments">0</strong></div>
+            <div class="adminMetricCard card"><span>Total Audits Completed</span><strong id="metricTotalAudits">0</strong></div>
+            <div class="adminMetricCard card"><span>Average Audit Score</span><strong id="metricAverageScore">0</strong></div>
+            <div class="adminMetricCard card"><span>New Customers This Month</span><strong id="metricNewCustomers">0</strong></div>
+          </section>
+
+          <section class="adminPlanGrid" aria-label="Selected plans and customers">
+            <div class="card adminPlanCard">
+              <div class="cardHeader">
+                <h2>Selected Plans</h2>
+                <span class="muted">From customer subscriptions</span>
+              </div>
+              <div class="adminSelectedPlanList" id="adminSelectedPlanList"></div>
+            </div>
+            <div class="card adminPlanCard">
+              <div class="cardHeader">
+                <h2>Customers by Plan</h2>
+                <span class="muted">Current assignments</span>
+              </div>
+              <div class="adminPlanCustomerList" id="adminPlanCustomerList"></div>
+            </div>
+          </section>
+
+          <section class="adminChartGrid" id="audit-analytics">
+            <div class="card adminChartCard">
+              <div class="cardHeader"><h2>Monthly Revenue</h2><span class="muted" id="mrrLabel">$0 MRR</span></div>
+              <canvas id="monthlyRevenueChart" height="170"></canvas>
+            </div>
+            <div class="card adminChartCard">
+              <div class="cardHeader"><h2>Customer Growth</h2><span class="muted">Last 6 months</span></div>
+              <canvas id="customerGrowthChart" height="170"></canvas>
+            </div>
+            <div class="card adminChartCard">
+              <div class="cardHeader"><h2>Audit Completion Trends</h2><span class="muted">Completed audits</span></div>
+              <canvas id="auditTrendChart" height="170"></canvas>
+            </div>
+            <div class="card adminChartCard">
+              <div class="cardHeader"><h2>Package Distribution</h2><span class="muted" id="outstandingLabel">$0 outstanding</span></div>
+              <canvas id="packageDistributionChart" height="170"></canvas>
+            </div>
+          </section>
+
+          <section class="card" id="customers">
+            <div class="cardHeader">
+              <h2>Customers</h2>
+              <div class="dashboardCardTools">
+                <div class="dashboardSearchBar card">
+                  <input class="dashboardSearchInput" id="adminCustomerSearch" type="search" placeholder="Search customers" />
+                </div>
+                <select class="field adminFilterSelect" id="adminStatusFilter">
+                  <option value="">All statuses</option>
+                  <option value="active">Active</option>
+                  <option value="trial">Trial</option>
+                  <option value="suspended">Suspended</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+            <div class="tableWrap">
+              <table class="table adminCustomerTable">
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Package</th>
+                    <th>Status</th>
+                    <th>Renewal</th>
+                    <th>Audits</th>
+                    <th>Avg Score</th>
+                    <th>Outstanding</th>
+                    <th>Manager</th>
+                  </tr>
+                </thead>
+                <tbody id="adminCustomersBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="adminSplitGrid">
+            <div class="card" id="packages">
+              <div class="cardHeader"><h2>Packages</h2><span class="muted">Plan catalog</span></div>
+              <div class="adminPackageList" id="adminPackageList"></div>
+            </div>
+            <div class="card" id="billing">
+              <div class="cardHeader"><h2>Recent Payments</h2><span class="muted">Paid, pending, and failed</span></div>
+              <div class="tableWrap">
+                <table class="table">
+                  <thead><tr><th>Customer</th><th>Amount</th><th>Status</th><th>Due/Paid</th></tr></thead>
+                  <tbody id="adminPaymentsBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="card" id="admin-settings">
+            <div class="cardHeader"><h2>Admin Settings</h2><span class="muted">Roles and configuration areas</span></div>
+            <div class="adminSettingsGrid">
+              <div><h3 class="adminSectionTitle">User Roles</h3><div class="adminPillList" id="adminRolesList"></div></div>
+              <div><h3 class="adminSectionTitle">Feature Toggles</h3><div class="adminToggleList" id="adminFeatureList"></div></div>
+              <div><h3 class="adminSectionTitle">Settings</h3><div class="adminPillList" id="adminSettingsList"></div></div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

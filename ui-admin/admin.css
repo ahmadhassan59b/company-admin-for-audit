@@ -1,0 +1,313 @@
+.adminApp .topNav {
+  border-bottom-color: rgba(37, 99, 235, 0.16);
+}
+
+.adminApp .navLink.active {
+  color: #2563eb;
+}
+
+.adminApp .dashboardNavItem {
+  text-decoration: none;
+}
+
+.adminApp .dashboardNavItem.active {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.18);
+}
+
+.adminApp .dashboardNavItem:hover {
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.adminDashboardGrid {
+  align-items: start;
+}
+
+.adminSourceBadge {
+  align-self: center;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
+  font-size: 0.82rem;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.adminMetricGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.adminMetricCard {
+  min-height: 96px;
+  padding: 16px;
+  display: grid;
+  align-content: space-between;
+}
+
+.adminMetricCard span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.adminMetricCard strong {
+  color: var(--text);
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.adminPlanGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 14px;
+}
+
+.adminPlanCard {
+  overflow: hidden;
+}
+
+.adminSelectedPlanList,
+.adminPlanCustomerList {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.adminSelectedPlanItem,
+.adminPlanCustomerGroup {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.adminSelectedPlanItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+}
+
+.adminSelectedPlanItem strong,
+.adminSelectedPlanItem span,
+.adminPlanCustomerNames span,
+.adminPlanCustomerNames small {
+  display: block;
+}
+
+.adminSelectedPlanItem span,
+.adminPlanCustomerNames small {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.adminSelectedPlanItem b {
+  white-space: nowrap;
+}
+
+.adminPlanCustomerTitle {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.adminPlanCustomerTitle span {
+  min-width: 28px;
+  min-height: 28px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.1);
+  color: #1d4ed8;
+  font-weight: 900;
+}
+
+.adminPlanCustomerNames {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.adminPlanCustomerNames span {
+  min-width: 0;
+  padding: 9px;
+  border-radius: 8px;
+  background: rgba(248, 250, 252, 0.88);
+  color: var(--text);
+  font-weight: 800;
+}
+
+.adminChartGrid,
+.adminSplitGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.adminChartCard {
+  padding-bottom: 14px;
+}
+
+.adminChartCard canvas {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+  padding: 0 14px 10px;
+}
+
+.adminFilterSelect {
+  min-width: 150px;
+}
+
+.adminCustomerTable th,
+.adminCustomerTable td {
+  white-space: nowrap;
+}
+
+.adminStatusPill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(100, 116, 139, 0.28);
+  background: rgba(100, 116, 139, 0.08);
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.adminStatusPill.tone-success {
+  color: #166534;
+  border-color: rgba(22, 101, 52, 0.22);
+  background: rgba(22, 163, 74, 0.11);
+}
+
+.adminStatusPill.tone-warning {
+  color: #92400e;
+  border-color: rgba(146, 64, 14, 0.22);
+  background: rgba(245, 158, 11, 0.13);
+}
+
+.adminStatusPill.tone-error {
+  color: #991b1b;
+  border-color: rgba(153, 27, 27, 0.22);
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.adminPackageList {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+}
+
+.adminPackageItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.adminPackageTitle {
+  font-weight: 900;
+  color: var(--text);
+}
+
+.adminPackageMeta {
+  display: grid;
+  gap: 2px;
+  justify-items: end;
+  color: var(--muted);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.adminPackageMeta strong {
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.adminSettingsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  padding: 16px;
+}
+
+.adminPillList,
+.adminToggleList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.adminToggleList {
+  display: grid;
+}
+
+.adminPill {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.48);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.adminToggleRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  min-height: 36px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-weight: 750;
+}
+
+@media (max-width: 900px) {
+  .adminMetricGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .adminChartGrid,
+  .adminPlanGrid,
+  .adminSplitGrid,
+  .adminSettingsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminPlanCustomerNames {
+    grid-template-columns: 1fr;
+  }
+
+  .adminPackageItem {
+    grid-template-columns: 1fr;
+  }
+
+  .adminPackageMeta {
+    justify-items: start;
+  }
+}

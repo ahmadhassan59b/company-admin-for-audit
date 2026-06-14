@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      document.documentElement.classList.add('app-loading');
+    </script>
+    <title>HubAudit</title>
+    <link rel="icon" href="/static/logo-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="/static/app.js" defer></script>
+    <script>
+      window.addEventListener('DOMContentLoaded', () => {
+        const token = window.localStorage.getItem('hubspot_audit_auth_token');
+        window.location.replace(token ? '/admin' : '/login');
+      });
+    </script>
+  </head>
+  <body>
+    <div class="appSkeletonOverlay" aria-hidden="true">
+      <div class="appSkeletonShell">
+        <div class="appSkeletonNav">
+          <div class="appSkeletonBrand">
+            <span class="skeleton skeletonCircle"></span>
+            <span class="skeleton skeletonLine short"></span>
+          </div>
+          <div class="appSkeletonPills">
+            <span class="skeleton skeletonChip"></span>
+          </div>
+        </div>
+        <div class="appSkeletonHero">
+          <div class="appSkeletonCopy">
+            <span class="skeleton skeletonEyebrow"></span>
+            <span class="skeleton skeletonTitle"></span>
+            <span class="skeleton skeletonText lg"></span>
+            <span class="skeleton skeletonText md"></span>
+          </div>
+          <div class="appSkeletonCard">
+            <div class="skeletonStack">
+              <span class="skeleton skeletonCardTitle"></span>
+              <span class="skeleton skeletonLine xl"></span>
+              <span class="skeleton skeletonLine lg"></span>
+              <span class="skeleton skeletonLine md"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="topNav">
+      <div class="container topNavInner">
+        <a class="brand" href="/">
+          <img class="brandLogo" src="/static/logo-mark.svg" alt="HubAudit" />
+          <span class="brandWord"><span class="hub">Hub</span><span class="audit">Audit</span></span>
+        </a>
+        <div class="navActions">
+          <span class="pill">Local</span>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container hero">
+      <div class="heroGrid">
+        <div>
+          <h1 class="heroTitle">Loading your workspace</h1>
+          <p class="heroSub">Redirecting you to the right place.</p>
+        </div>
+        <div class="card">
+          <div class="cardPad">
+            <p class="muted">If you are not redirected automatically, go to</p>
+            <p style="margin-top:10px">
+              <a class="btnLink" href="/login">/login</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
