@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      document.documentElement.classList.add('app-loading');
+    </script>
+    <title>Profile | HubAudit</title>
+    <link rel="icon" href="/static/logo-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <div class="appSkeletonOverlay" aria-hidden="true">
+      <div class="appSkeletonShell">
+        <div class="appSkeletonNav">
+          <div class="appSkeletonBrand">
+            <span class="skeleton skeletonCircle"></span>
+            <span class="skeleton skeletonLine short"></span>
+          </div>
+          <div class="appSkeletonPills">
+            <span class="skeleton skeletonChip"></span>
+            <span class="skeleton skeletonChip"></span>
+          </div>
+        </div>
+        <div class="appSkeletonHero">
+          <div class="appSkeletonCopy">
+            <span class="skeleton skeletonEyebrow"></span>
+            <span class="skeleton skeletonTitle"></span>
+            <span class="skeleton skeletonText xl"></span>
+            <span class="skeleton skeletonText lg"></span>
+          </div>
+          <div class="appSkeletonCard">
+            <div class="skeletonStack">
+              <span class="skeleton skeletonCardTitle"></span>
+              <span class="skeleton skeletonLine xl"></span>
+              <span class="skeleton skeletonLine lg"></span>
+              <span class="skeleton skeletonLine md"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="skipLink" href="#main">Skip to content</a>
+    <nav class="topNav">
+      <div class="container topNavInner">
+        <a class="brand" href="/dashboard/accounts">
+          <img class="brandLogo" src="/static/logo-mark.svg" alt="HubAudit" />
+          <span class="brandWord"><span class="hub">Hub</span><span class="audit">Audit</span></span>
+        </a>
+        <button class="sidebarToggleBtn" type="button" id="sidebarToggleBtn" aria-expanded="true" aria-label="Collapse sidebar">
+          <i class="fa-solid fa-bars sidebarToggleIcon" aria-hidden="true"></i>
+        </button>
+        <div class="navActions">
+          <button class="helpLink" type="button" id="helpBtn">
+            <i class="fa-regular fa-circle-question" aria-hidden="true"></i>
+            <span>Help</span>
+          </button>
+          <div class="menuWrap">
+            <button class="menuBtn" type="button" id="accountMenuBtn" aria-haspopup="true" aria-expanded="false">
+              <span class="avatar" id="menuAvatar">HA</span>
+              <span class="menuBtnLabel" id="menuAccountLabel">Account</span>
+              <i class="fa-solid fa-chevron-down menuCaret" aria-hidden="true"></i>
+            </button>
+            <div class="menu" id="accountMenu" role="menu" aria-label="Account menu">
+              <div class="menuSection">
+                <div class="menuUser">
+                  <span class="avatar" id="menuAvatarBig">HA</span>
+                  <div class="menuUserText">
+                    <div class="menuUserName" id="menuUserName">Workspace</div>
+                    <div class="menuUserEmail" id="menuUserEmail">user@example.com</div>
+                  </div>
+                </div>
+              </div>
+              <div class="menuSection">
+                <div class="menuActions">
+                  <button class="linkBtn" type="button" id="profileFromMenuBtn">Profile</button>
+                  <button class="linkBtn" type="button" id="logoutBtn">Sign out</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container dashboardShell" id="main">
+      <div class="dashboardGrid" style="margin-top:24px">
+        <aside class="dashboardSidebar card">
+          <div class="dashboardSidebarSection">
+            <div class="dashboardSidebarTitle">Menu</div>
+            <button class="dashboardNavItem" type="button" data-dashboard-target="accounts">
+              <i class="fa-solid fa-house dashboardNavIcon" aria-hidden="true"></i>
+              <span>Accounts</span>
+            </button>
+            <button class="dashboardNavItem" type="button" data-dashboard-target="audits">
+              <i class="fa-solid fa-clipboard-list dashboardNavIcon" aria-hidden="true"></i>
+              <span>Audits</span>
+            </button>
+            <button class="dashboardNavItem" type="button" data-dashboard-target="privacy">
+              <i class="fa-solid fa-shield-heart dashboardNavIcon" aria-hidden="true"></i>
+              <span>Privacy</span>
+            </button>
+            <button class="dashboardNavItem" type="button" data-dashboard-target="subscription">
+              <i class="fa-solid fa-circle-dollar-to-slot dashboardNavIcon" aria-hidden="true"></i>
+              <span>Subscription</span>
+            </button>
+          </div>
+        </aside>
+
+        <section class="dashboardMain stack">
+          <section class="profileHero">
+            <div class="profileHeroUser">
+              <div class="profileHeroAvatar" id="profileAvatar">HA</div>
+              <div>
+                <div class="profileHeroName" id="profileName">Profile</div>
+                <div class="profileHeroSub" id="profileSubtitle">Account details and security controls</div>
+              </div>
+            </div>
+            <div class="profileHeroStat">
+              <div class="profileHeroStatLabel">Account Status</div>
+              <div class="profileHeroStatValue" id="profileStatus">Active</div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="cardHeader">
+              <h2>Personal Information</h2>
+              <button class="btnPrimary" type="button" id="editProfileBtn">Edit Profile</button>
+            </div>
+            <div class="cardPad">
+              <div class="profileInfoGrid">
+                <div class="profileInfoField">
+                  <div class="profileInfoLabel">First Name</div>
+                  <div class="profileInfoValue" id="firstNameField">--</div>
+                </div>
+                <div class="profileInfoField">
+                  <div class="profileInfoLabel">Last Name</div>
+                  <div class="profileInfoValue" id="lastNameField">--</div>
+                </div>
+                <div class="profileInfoField">
+                  <div class="profileInfoLabel">Email Address</div>
+                  <div class="profileInfoValue" id="emailField">--</div>
+                </div>
+                <div class="profileInfoField">
+                  <div class="profileInfoLabel">Role</div>
+                  <div class="profileInfoValue" id="roleField">--</div>
+                </div>
+                <div class="profileInfoField">
+                  <div class="profileInfoLabel">Tenant</div>
+                  <div class="profileInfoValue" id="tenantField">--</div>
+                </div>
+                <div class="profileInfoField">
+                  <div class="profileInfoLabel">HubSpot Portal</div>
+                  <div class="profileInfoValue" id="portalField">--</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="cardHeader">
+              <h2>Security &amp; Privacy</h2>
+              <span class="muted" id="twoFactorBadge">2FA off</span>
+            </div>
+            <div class="cardPad profileSecurityCard">
+              <div class="muted" id="twoFactorSummary" style="line-height:1.55">
+                Two-factor authentication adds a second check when signing in.
+              </div>
+              <div class="securitySecretBox" id="twoFactorSecretBox" style="display:none">
+                <div class="securitySecretLabel">Authenticator setup</div>
+                <div class="securityQrWrap" id="twoFactorQrWrap" style="display:none">
+                  <img class="securityQrImg" id="twoFactorQr" alt="QR code for authenticator setup" />
+                </div>
+                <div class="securitySecretMono" id="twoFactorSecretText"></div>
+                <div class="securitySecretMono muted" id="twoFactorUriText" style="margin-top:8px"></div>
+              </div>
+              <div class="row" style="gap:10px; flex-wrap:wrap">
+                <button class="btnSecondary" type="button" id="setupTwoFactorBtn">Set up 2FA</button>
+                <button class="btnSecondary" type="button" id="disableTwoFactorBtn" style="display:none">Disable 2FA</button>
+              </div>
+              <div class="twoFactorSetupBox" id="twoFactorSetupBox" style="display:none">
+                <div class="securitySecretLabel">Finish setup</div>
+                <div class="muted" style="line-height:1.55">
+                  Scan the QR code above with an authenticator app, then enter the 6-digit code to activate 2FA.
+                </div>
+                <div class="twoFactorSetupActions">
+                  <input
+                    class="field"
+                    id="twoFactorSetupCode"
+                    placeholder="6-digit verification code"
+                    inputmode="numeric"
+                    autocomplete="one-time-code"
+                    pattern="[0-9]{6}"
+                    maxlength="6"
+                  />
+                  <button class="btnPrimary" type="button" id="twoFactorSetupConfirmBtn">Confirm 2FA</button>
+                </div>
+              </div>
+              <div class="muted" id="twoFactorNotice" style="line-height:1.55">
+                Use an authenticator app like Google Authenticator, Authy, or 1Password.
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <div class="modalOverlay" id="profileEditModal" aria-hidden="true" style="display:none">
+      <div class="modalCard settingsModalCard" role="dialog" aria-modal="true" aria-labelledby="profileEditTitle">
+        <div class="modalHeader">
+          <div>
+            <div class="modalEyebrow">Profile</div>
+            <h2 class="modalTitle" id="profileEditTitle">Edit Profile</h2>
+          </div>
+          <button class="modalClose" type="button" id="profileEditCloseBtn" aria-label="Close profile editor">×</button>
+        </div>
+        <div class="modalBody">
+          <div class="profileInfoGrid" style="margin-bottom:16px">
+            <div class="profileInfoField">
+              <label class="profileInfoLabel" for="profileFirstName">First Name</label>
+              <input class="field" id="profileFirstName" />
+            </div>
+            <div class="profileInfoField">
+              <label class="profileInfoLabel" for="profileLastName">Last Name</label>
+              <input class="field" id="profileLastName" />
+            </div>
+            <div class="profileInfoField">
+              <label class="profileInfoLabel" for="profilePhone">Phone Number</label>
+              <input class="field" id="profilePhone" placeholder="Phone Number" />
+            </div>
+            <div class="profileInfoField">
+              <label class="profileInfoLabel" for="profileLocation">Location</label>
+              <input class="field" id="profileLocation" placeholder="Enter Location" />
+            </div>
+            <div class="profileInfoField">
+              <label class="profileInfoLabel" for="profileDesignation">Designation</label>
+              <input class="field" id="profileDesignation" placeholder="Enter Designation" />
+            </div>
+            <div class="profileInfoField">
+              <label class="profileInfoLabel" for="profileCompany">Company Name</label>
+              <input class="field" id="profileCompany" placeholder="Company Name" />
+            </div>
+          </div>
+          <div class="row">
+            <button class="btnSecondary" type="button" id="profileEditCancelBtn">Cancel</button>
+            <button class="btnPrimary" type="button" id="profileEditSaveBtn">Save Profile</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      window.addEventListener('DOMContentLoaded', async () => {
+        const hubspotUI = window.HubSpotAuditUI || {};
+        const apiFetch = hubspotUI.apiFetch;
+        const TOKEN_STORAGE = hubspotUI.TOKEN_STORAGE;
+        const PORTAL_ID_STORAGE = hubspotUI.PORTAL_ID_STORAGE;
+        const escapeHtml = hubspotUI.escapeHtml;
+        const $ = hubspotUI.$;
+        const onDataChange = typeof hubspotUI.onDataChange === 'function' ? hubspotUI.onDataChange : () => () => {};
+        const broadcastDataChange =
+          typeof hubspotUI.broadcastDataChange === 'function' ? hubspotUI.broadcastDataChange : () => ({});
+        const TWO_FACTOR_QR_BASE = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=';
+        const PROFILE_STORAGE = 'hubspot_audit_profile';
+        const token = window.localStorage.getItem(TOKEN_STORAGE);
+        if (!token) {
+          window.location.replace('/login');
+          return;
+        }
+
+        function closeMenu() {
+          $('accountMenu').classList.remove('open');
+          $('accountMenuBtn').setAttribute('aria-expanded', 'false');
+        }
+
+        function openMenu() {
+          $('accountMenu').classList.add('open');
+          $('accountMenuBtn').setAttribute('aria-expanded', 'true');
+        }
+
+        $('accountMenuBtn').addEventListener('click', (e) => {
+          e.preventDefault();
+          if ($('accountMenu').classList.contains('open')) closeMenu();
+          else openMenu();
+        });
+
+        window.addEventListener('click', (e) => {
+          const menu = $('accountMenu');
+          const btn = $('accountMenuBtn');
+          if (!menu.classList.contains('open')) return;
+          if (menu.contains(e.target) || btn.contains(e.target)) return;
+          closeMenu();
+        });
+
+        $('logoutBtn').addEventListener('click', () => {
+          window.localStorage.removeItem(TOKEN_STORAGE);
+          window.location.replace('/login');
+        });
+
+        $('profileFromMenuBtn').addEventListener('click', () => {
+          closeMenu();
+          window.location.assign('/dashboard/profile');
+        });
+
+        $('helpBtn').addEventListener('click', () => window.alert('Help center coming soon.'));
+
+        function openProfileEditModal() {
+          const profile = getStoredProfile();
+          $('profileFirstName').value = profile.firstName || '';
+          $('profileLastName').value = profile.lastName || '';
+          $('profilePhone').value = profile.phone || '';
+          $('profileLocation').value = profile.location || '';
+          $('profileDesignation').value = profile.designation || '';
+          $('profileCompany').value = profile.companyName || '';
+          $('profileEditModal').style.display = 'flex';
+          $('profileEditModal').setAttribute('aria-hidden', 'false');
+          document.body.classList.add('modalOpen');
+        }
+
+        function closeProfileEditModal() {
+          $('profileEditModal').style.display = 'none';
+          $('profileEditModal').setAttribute('aria-hidden', 'true');
+          document.body.classList.remove('modalOpen');
+        }
+
+        function getStoredProfile() {
+          try {
+            return JSON.parse(window.localStorage.getItem(PROFILE_STORAGE) || '{}') || {};
+          } catch {
+            return {};
+          }
+        }
+
+        function saveStoredProfile(nextProfile) {
+          window.localStorage.setItem(PROFILE_STORAGE, JSON.stringify(nextProfile || {}));
+        }
+
+        function renderProfileFields({ user, email, portalId, account } = {}) {
+          const stored = getStoredProfile();
+          const safeEmail = String(email || 'user@example.com');
+          const baseName = safeEmail.split('@')[0] || 'Workspace';
+          const firstName = stored.firstName || baseName.split(/[._-]/)[0] || baseName;
+          const lastName = stored.lastName || (user && user.role ? String(user.role) : 'User');
+          const accountLabel = account
+            ? String(
+                account.account_display_name ||
+                  account.display_name ||
+                  account.account_name ||
+                  account.hubspot_account_name ||
+                  account.hubspot_account_domain ||
+                  `Portal ${portalId || 'n/a'}`
+              )
+            : 'No portal connected';
+          $('profileAvatar').textContent = (firstName[0] || 'H').toUpperCase() + (lastName[0] || 'A').toUpperCase();
+          $('profileName').textContent = `${firstName} ${lastName}`.trim();
+          $('profileSubtitle').textContent = account
+            ? `Connected portal ${portalId || 'n/a'}`
+            : 'No portal connected';
+          $('profileStatus').textContent = account ? 'Active' : 'No portal';
+          $('firstNameField').textContent = firstName || '--';
+          $('lastNameField').textContent = lastName || '--';
+          $('emailField').textContent = safeEmail;
+          $('roleField').textContent = stored.role || (user && user.role ? String(user.role) : 'user');
+          $('tenantField').textContent = stored.tenant || (user && user.tenant_id ? String(user.tenant_id) : 'n/a');
+          $('portalField').textContent = stored.companyName || portalId || 'n/a';
+          $('menuUserEmail').textContent = safeEmail;
+          $('menuUserName').textContent = `${firstName} ${lastName}`.trim();
+          const initials = (firstName[0] || 'H').toUpperCase() + (lastName[0] || 'A').toUpperCase();
+          $('menuAvatar').textContent = initials;
+          $('menuAvatarBig').textContent = initials;
+          $('menuAccountLabel').textContent = accountLabel;
+          if ($('sidebarBrandMeta')) {
+            $('sidebarBrandMeta').textContent = accountLabel || 'Workspace';
+          }
+        }
+
+        $('editProfileBtn').addEventListener('click', openProfileEditModal);
+        $('profileEditCloseBtn').addEventListener('click', closeProfileEditModal);
+        $('profileEditCancelBtn').addEventListener('click', closeProfileEditModal);
+        $('profileEditModal').addEventListener('click', (event) => {
+          if (event.target === $('profileEditModal')) closeProfileEditModal();
+        });
+        $('profileEditSaveBtn').addEventListener('click', () => {
+          const current = getStoredProfile();
+          const next = {
+            ...current,
+            firstName: String($('profileFirstName').value || '').trim(),
+            lastName: String($('profileLastName').value || '').trim(),
+            phone: String($('profilePhone').value || '').trim(),
+            location: String($('profileLocation').value || '').trim(),
+            designation: String($('profileDesignation').value || '').trim(),
+            companyName: String($('profileCompany').value || '').trim()
+          };
+          saveStoredProfile(next);
+          renderProfileFields({
+            user: currentUser,
+            email: currentEmail,
+            portalId: currentPortalId,
+            account: currentAccount
+          });
+          window.HubSpotAuditUI.broadcastDataChange({ type: 'profile:updated' });
+          closeProfileEditModal();
+        });
+
+        let currentUser = null;
+        let currentEmail = 'user@example.com';
+        let currentPortalId = '';
+        let currentAccount = null;
+        const twoFactorState = {
+          enabled: false,
+          verifiedAt: null,
+          setupPending: false,
+          secret: null,
+          otpauthUri: null
+        };
+
+        function renderTwoFactorState() {
+          const enabled = Boolean(twoFactorState.enabled);
+          const setupPending = Boolean(twoFactorState.setupPending);
+          $('twoFactorBadge').textContent = enabled ? '2FA on' : '2FA off';
+          $('setupTwoFactorBtn').textContent = enabled ? '2FA enabled' : 'Set up 2FA';
+          $('setupTwoFactorBtn').disabled = enabled;
+          $('disableTwoFactorBtn').style.display = enabled ? 'inline-flex' : 'none';
+          $('twoFactorSummary').textContent = enabled
+            ? `Two-factor authentication is enabled${twoFactorState.verifiedAt ? ` since ${new Date(twoFactorState.verifiedAt).toLocaleString()}` : ''}.`
+            : 'Two-factor authentication adds a second check when signing in.';
+          $('twoFactorSecretBox').style.display = setupPending ? 'block' : 'none';
+          $('twoFactorQrWrap').style.display = setupPending && twoFactorState.otpauthUri ? 'flex' : 'none';
+          $('twoFactorSetupBox').style.display = setupPending ? 'block' : 'none';
+          if (!setupPending) {
+            $('twoFactorQr').removeAttribute('src');
+            $('twoFactorSetupCode').value = '';
+          }
+        }
+
+        function clearSetupUi() {
+          twoFactorState.setupPending = false;
+          twoFactorState.secret = null;
+          twoFactorState.otpauthUri = null;
+          $('twoFactorSecretBox').style.display = 'none';
+          $('twoFactorQr').removeAttribute('src');
+          $('twoFactorSecretText').textContent = '';
+          $('twoFactorUriText').textContent = '';
+          $('twoFactorSetupBox').style.display = 'none';
+          $('twoFactorSetupCode').value = '';
+        }
+
+        async function refreshTwoFactor() {
+          const data = await apiFetch('/api/security/2fa/status');
+          twoFactorState.enabled = Boolean(data && data.enabled);
+          twoFactorState.verifiedAt = data ? data.verifiedAt : null;
+          renderTwoFactorState();
+        }
+
+        async function startTwoFactorSetup() {
+          try {
+            const result = await apiFetch('/api/security/2fa/setup', {
+              method: 'POST',
+              body: JSON.stringify({})
+            });
+            twoFactorState.setupPending = true;
+            twoFactorState.secret = result.secret || null;
+            twoFactorState.otpauthUri = result.otpauth_uri || null;
+            $('twoFactorSecretBox').style.display = 'block';
+            $('twoFactorQr').src = result.otpauth_uri ? `${TWO_FACTOR_QR_BASE}${encodeURIComponent(result.otpauth_uri)}` : '';
+            $('twoFactorSecretText').textContent = `Secret: ${result.secret || 'n/a'}`;
+            $('twoFactorUriText').textContent = `OTP URI: ${result.otpauth_uri || 'n/a'}`;
+            $('twoFactorNotice').textContent =
+              'Scan the QR code with your authenticator app, then enter the 6-digit code below to finish setup.';
+            renderTwoFactorState();
+          } catch (error) {
+            $('twoFactorNotice').textContent = error.message || 'Could not complete 2FA setup.';
+          }
+        }
+
+        async function confirmTwoFactorSetup() {
+          try {
+            const code = String($('twoFactorSetupCode').value || '').trim();
+            if (!code) {
+              $('twoFactorNotice').textContent = 'Enter the 6-digit code from your authenticator app.';
+              return;
+            }
+            await apiFetch('/api/security/2fa/enable', {
+              method: 'POST',
+              body: JSON.stringify({ code })
+            });
+            $('twoFactorNotice').textContent = 'Two-factor authentication is now enabled.';
+            clearSetupUi();
+            await refreshTwoFactor();
+          } catch (error) {
+            $('twoFactorNotice').textContent =
+              error.body && error.body.error && error.body.error.code === 'invalid_two_factor_code'
+                ? 'That code was not accepted. Check that your phone time is set to automatic, then try the next 6-digit code.'
+                : error.message || 'Could not confirm 2FA setup.';
+          }
+        }
+
+        async function disableTwoFactor() {
+          try {
+            await apiFetch('/api/security/2fa/disable', {
+              method: 'POST',
+              body: JSON.stringify({})
+            });
+            clearSetupUi();
+            $('twoFactorNotice').textContent = 'Two-factor authentication has been disabled.';
+            await refreshTwoFactor();
+          } catch (error) {
+            $('twoFactorNotice').textContent = error.message || 'Could not disable 2FA.';
+          }
+        }
+
+        $('setupTwoFactorBtn').addEventListener('click', startTwoFactorSetup);
+        $('disableTwoFactorBtn').addEventListener('click', disableTwoFactor);
+        $('twoFactorSetupConfirmBtn').addEventListener('click', confirmTwoFactorSetup);
+        $('twoFactorSetupCode').addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            confirmTwoFactorSetup();
+          }
+        });
+
+        async function loadProfilePage() {
+          try {
+          const [me, hubspotAccountsResponse] = await Promise.all([
+            apiFetch('/api/auth/me'),
+            apiFetch('/api/hubspot/accounts?summary=1').catch(() => ({ accounts: [] }))
+          ]);
+
+          currentUser = me && me.user ? me.user : null;
+          currentEmail = currentUser && currentUser.email ? String(currentUser.email) : 'user@example.com';
+          const account = Array.isArray(hubspotAccountsResponse.accounts)
+            ? hubspotAccountsResponse.accounts.find((item) => item.is_active)
+            : null;
+          currentAccount = account;
+          currentPortalId = account ? account.hubspot_portal_id || '' : window.localStorage.getItem(PORTAL_ID_STORAGE) || '';
+          renderProfileFields({
+            user: currentUser,
+            email: currentEmail,
+            portalId: currentPortalId,
+            account: currentAccount
+          });
+          await refreshTwoFactor();
+          } catch (error) {
+          $('twoFactorNotice').textContent = error.message || 'Could not load profile.';
+          }
+        }
+
+        let profilePageRefreshPromise = null;
+        function refreshProfilePageFromServer() {
+          if (profilePageRefreshPromise) return profilePageRefreshPromise;
+          profilePageRefreshPromise = loadProfilePage().finally(() => {
+            profilePageRefreshPromise = null;
+          });
+          return profilePageRefreshPromise;
+        }
+
+        window.HubSpotAuditUI.onDataChange((detail = {}) => {
+          const changeType = String(detail.type || '').toLowerCase();
+          if (changeType === 'accounts:updated' || changeType === 'profile:updated') {
+            refreshProfilePageFromServer();
+          }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
+            refreshProfilePageFromServer();
+          }
+        });
+
+        await loadProfilePage();
+
+        window.HubSpotAuditUI.setAppReady();
+      });
+    </script>
+  </body>
+</html>

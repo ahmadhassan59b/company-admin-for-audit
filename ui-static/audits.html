@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+      document.documentElement.classList.add('app-loading');
+    </script>
+    <title>Audits | HubAudit</title>
+    <link rel="icon" href="/static/logo-mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <div class="appSkeletonOverlay" aria-hidden="true">
+      <div class="appSkeletonShell">
+        <div class="appSkeletonNav">
+          <div class="appSkeletonBrand">
+            <span class="skeleton skeletonCircle"></span>
+            <span class="skeleton skeletonLine short"></span>
+          </div>
+          <div class="appSkeletonPills">
+            <span class="skeleton skeletonChip"></span>
+            <span class="skeleton skeletonChip"></span>
+          </div>
+        </div>
+        <div class="appSkeletonHero">
+          <div class="appSkeletonCopy">
+            <span class="skeleton skeletonEyebrow"></span>
+            <span class="skeleton skeletonTitle"></span>
+            <span class="skeleton skeletonText xl"></span>
+            <span class="skeleton skeletonText lg"></span>
+          </div>
+          <div class="appSkeletonCard">
+            <div class="skeletonStack">
+              <span class="skeleton skeletonCardTitle"></span>
+              <span class="skeleton skeletonLine xl"></span>
+              <span class="skeleton skeletonLine lg"></span>
+              <span class="skeleton skeletonLine md"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a class="skipLink" href="#main">Skip to content</a>
+    <nav class="topNav">
+      <div class="container topNavInner">
+        <a class="brand" href="/dashboard/accounts">
+          <img class="brandLogo" src="/static/logo-mark.svg" alt="HubAudit" />
+          <span class="brandWord"><span class="hub">Hub</span><span class="audit">Audit</span></span>
+        </a>
+                <button class="sidebarToggleBtn" type="button" id="sidebarToggleBtn" aria-expanded="true" aria-label="Collapse sidebar">
+          <i class="fa-solid fa-bars sidebarToggleIcon" aria-hidden="true"></i>
+        </button>
+        <div class="navActions">
+          <button class="helpLink" type="button" id="helpBtn">
+            <i class="fa-regular fa-circle-question" aria-hidden="true"></i>
+            <span>Help</span>
+          </button>
+          <div class="menuWrap">
+            <button class="menuBtn" type="button" id="accountMenuBtn" aria-haspopup="true" aria-expanded="false">
+              <span class="avatar" id="menuAvatar">HA</span>
+              <span class="menuBtnLabel" id="menuAccountLabel">Account</span>
+              <i class="fa-solid fa-chevron-down menuCaret" aria-hidden="true"></i>
+            </button>
+            <div class="menu" id="accountMenu" role="menu" aria-label="Account menu">
+              <div class="menuSection">
+                <div class="menuUser">
+                  <span class="avatar" id="menuAvatarBig">HA</span>
+                  <div class="menuUserText">
+                    <div class="menuUserName" id="menuUserName">Workspace</div>
+                    <div class="menuUserEmail" id="menuUserEmail">user@example.com</div>
+                  </div>
+                </div>
+              </div>
+              <div class="menuSection">
+                <div class="menuTitle">Account</div>
+                <div class="menuList" id="accountList"></div>
+              </div>
+              <div class="menuSection">
+                <div class="menuActions">
+                  <button class="linkBtn" type="button" id="profileFromMenuBtn">Profile</button>
+                  <button class="linkBtn" type="button" id="logoutBtn">Sign out</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container dashboardShell" id="main">
+      <div class="dashboardGrid" style="margin-top:24px">
+        <aside class="dashboardSidebar card">
+          <div class="dashboardSidebarSection">
+            <div class="dashboardSidebarTitle">Menu</div>
+            <button class="dashboardNavItem" type="button" data-dashboard-target="accounts">
+              <i class="fa-solid fa-house dashboardNavIcon" aria-hidden="true"></i>
+              <span>Accounts</span>
+            </button>
+                        <button class="dashboardNavItem active" type="button" data-dashboard-target="audits">
+              <i class="fa-solid fa-clipboard-list dashboardNavIcon" aria-hidden="true"></i>
+              <span>Audits</span>
+            </button>
+                        <button class="dashboardNavItem" type="button" data-dashboard-target="privacy">
+              <i class="fa-solid fa-shield-heart dashboardNavIcon" aria-hidden="true"></i>
+              <span>Privacy</span>
+            </button>
+                        <button class="dashboardNavItem" type="button" data-dashboard-target="subscription">
+              <i class="fa-solid fa-circle-dollar-to-slot dashboardNavIcon" aria-hidden="true"></i>
+              <span>Subscription</span>
+            </button>
+          </div>
+        </aside>
+
+        <section class="dashboardMain stack">
+          <div class="pageHeaderRow">
+            <div>
+              <h1 class="heroTitle" id="pageTitle">Audit Summary</h1>
+              <div class="muted" id="pageSubtitle">Review audit runs by account and date.</div>
+            </div>
+            <div class="dashboardSearchBar card pageSearchBar">
+              <i class="fa-solid fa-magnifying-glass dashboardSearchIcon" aria-hidden="true"></i>
+              <input class="dashboardSearchInput" id="auditSearch" type="search" placeholder="Search by Account Name" />
+            </div>
+          </div>
+
+          <section class="summaryBanner" id="summaryBanner">
+            <div>
+              <p class="eyebrow" style="margin:0 0 10px; color:rgba(255,255,255,0.85)">Latest audit</p>
+              <h2 class="summaryBannerTitle" id="latestScore">--</h2>
+              <div class="summaryBannerMeta" id="latestMeta">No audits yet.</div>
+            </div>
+            <div class="summaryBannerAction">
+              <button class="btnSecondary" type="button" id="viewLatestBtn">View latest</button>
+            </div>
+          </section>
+
+          <section class="summaryStatGrid" id="summaryStats"></section>
+
+          <section class="card">
+            <div class="cardHeader">
+              <h2>Audit Runs (<span id="auditCount">0</span>)</h2>
+              <span class="muted" id="auditTableNote">Showing all completed audit runs</span>
+            </div>
+            <div class="tableWrap">
+              <table class="table" id="auditsTable">
+                <thead>
+                  <tr>
+                    <th>Account Owner</th>
+                    <th>Scope</th>
+                    <th>Audit Date</th>
+                    <th>Health Score</th>
+                    <th>Critical</th>
+                    <th>High</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="auditsTableBody"></tbody>
+              </table>
+            </div>
+            <div class="tableFooter">
+              <span class="muted" id="auditTableRange">Showing 0 of 0</span>
+              <span class="muted">Select View Result to open the report</span>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      window.addEventListener('DOMContentLoaded', async () => {
+        const hubspotUI = window.HubSpotAuditUI || {};
+        const apiFetch = hubspotUI.apiFetch;
+        const TOKEN_STORAGE = hubspotUI.TOKEN_STORAGE;
+        const PORTAL_ID_STORAGE = hubspotUI.PORTAL_ID_STORAGE;
+        const escapeHtml = hubspotUI.escapeHtml;
+        const $ = hubspotUI.$;
+        const onDataChange = typeof hubspotUI.onDataChange === 'function' ? hubspotUI.onDataChange : () => () => {};
+        const token = window.localStorage.getItem(TOKEN_STORAGE);
+        if (!token) {
+          window.location.replace('/login');
+          return;
+        }
+
+        async function downloadAuditExport(auditId, format) {
+          const response = await fetch(`/api/audits/${encodeURIComponent(auditId)}/export/${format}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          if (!response.ok) {
+            const body = await response.json().catch(() => ({}));
+            const message = body && body.error && body.error.message ? body.error.message : 'Export failed';
+            throw new Error(message);
+          }
+
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `hubspot-audit-${auditId}.${format}`;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+        }
+
+        $('logoutBtn').addEventListener('click', () => {
+          window.localStorage.removeItem(TOKEN_STORAGE);
+          window.location.replace('/login');
+        });
+
+        const profileFromMenuBtn = $('profileFromMenuBtn');
+        if (profileFromMenuBtn) {
+          profileFromMenuBtn.addEventListener('click', () => {
+            $('accountMenu').classList.remove('open');
+            window.location.assign('/dashboard/profile');
+          });
+        }
+
+        function closeMenu() {
+          $('accountMenu').classList.remove('open');
+          $('accountMenuBtn').setAttribute('aria-expanded', 'false');
+        }
+
+        function openMenu() {
+          $('accountMenu').classList.add('open');
+          $('accountMenuBtn').setAttribute('aria-expanded', 'true');
+        }
+
+        $('accountMenuBtn').addEventListener('click', (e) => {
+          e.preventDefault();
+          if ($('accountMenu').classList.contains('open')) closeMenu();
+          else openMenu();
+        });
+
+        window.addEventListener('click', (e) => {
+          const menu = $('accountMenu');
+          const btn = $('accountMenuBtn');
+          if (!menu.classList.contains('open')) return;
+          if (menu.contains(e.target) || btn.contains(e.target)) return;
+          closeMenu();
+        });
+
+        const helpBtn = $('helpBtn');
+        if (helpBtn) helpBtn.addEventListener('click', () => window.alert('Help center coming soon.'));
+
+        async function loadAuditsPage() {
+          try {
+          const [me, auditsResponse, accountsResponse] = await Promise.all([
+            apiFetch('/api/auth/me'),
+            apiFetch('/api/audit'),
+            apiFetch('/api/hubspot/accounts?summary=1').catch(() => ({ accounts: [] }))
+          ]);
+
+          const user = me && me.user ? me.user : null;
+          const email = user && user.email ? String(user.email) : 'Workspace';
+          $('menuUserEmail').textContent = email;
+          $('menuUserName').textContent = email.split('@')[0] || 'Workspace';
+          const initials = (email[0] || 'H').toUpperCase() + (email.split('@')[0]?.[1] || 'A').toUpperCase();
+          $('menuAvatar').textContent = initials;
+          $('menuAvatarBig').textContent = initials;
+
+          const accounts = (accountsResponse && accountsResponse.accounts) || [];
+          const audits = (auditsResponse && auditsResponse.audits) || [];
+          const portalId = window.localStorage.getItem(PORTAL_ID_STORAGE) || '';
+          const portalFilter = new URLSearchParams(window.location.search).get('portalId') || portalId || '';
+          const labelFor = (account) =>
+            String(
+              account.account_display_name ||
+                account.display_name ||
+                account.account_name ||
+                account.hubspot_account_name ||
+                account.hubspot_account_domain ||
+                `Portal ${account.hubspot_portal_id || ''}`
+            );
+          const formatDateTimeParts = (value) => {
+            const date = value ? new Date(value) : null;
+            if (!date || Number.isNaN(date.getTime())) {
+              return { date: '--', time: '--' };
+            }
+            return {
+              date: date.toLocaleDateString(),
+              time: date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+            };
+          };
+          const accountByPortal = new Map(
+            accounts.map((account) => [String(account.hubspot_portal_id || ''), account])
+          );
+          const activeConnectedAccount = accounts.find((account) => account.is_active && account.hubspot_portal_id);
+          const activePortalId = activeConnectedAccount ? String(activeConnectedAccount.hubspot_portal_id) : portalFilter;
+          const activeLabel = activeConnectedAccount
+            ? labelFor(activeConnectedAccount)
+            : activePortalId
+              ? `Portal ${activePortalId}`
+              : 'No portal connected';
+          $('menuAccountLabel').textContent = activeLabel;
+          if ($('sidebarBrandMeta')) {
+            $('sidebarBrandMeta').textContent = activeLabel || 'Workspace';
+          }
+          const visibleAudits = portalFilter
+            ? audits.filter((audit) => String(audit.hubspot_portal_id || '') === portalFilter)
+            : audits.slice();
+          const sorted = visibleAudits
+            .slice()
+            .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+          const activePortalAccount = portalFilter ? accountByPortal.get(portalFilter) : null;
+
+          $('pageTitle').textContent = portalFilter
+            ? `Audits for ${activePortalAccount ? labelFor(activePortalAccount) : `Portal ${portalFilter}`}`
+            : 'Audit Summary';
+          $('pageSubtitle').textContent = portalFilter
+            ? `Showing audit runs for ${activePortalAccount ? labelFor(activePortalAccount) : `Portal ${portalFilter}`}.`
+            : 'Review audit runs by account and date.';
+          $('auditTableNote').textContent = portalFilter
+            ? `Showing audits for portal ${portalFilter}`
+            : 'Showing all completed audit runs';
+
+          const search = $('auditSearch');
+          let searchTerm = search ? search.value || '' : '';
+          const render = () => {
+            const query = searchTerm.trim().toLowerCase();
+            const filtered = query
+              ? sorted.filter((audit) => {
+                  const account = accountByPortal.get(String(audit.hubspot_portal_id || ''));
+                  const values = [
+                    audit.id,
+                    audit.audit_number,
+                    audit.score,
+                    audit.status,
+                    audit.hubspot_portal_id,
+                    account ? labelFor(account) : ''
+                  ]
+                    .map((value) => String(value || '').toLowerCase())
+                    .join(' ');
+                  return values.includes(query);
+                })
+              : sorted;
+
+            $('auditCount').textContent = String(sorted.length);
+            $('auditTableNote').textContent = portalFilter
+              ? `Showing audits for portal ${portalFilter}`
+              : query && filtered.length !== sorted.length
+                ? `Filtered to ${filtered.length} of ${sorted.length}`
+                : 'Showing all completed audit runs';
+            $('auditTableRange').textContent = filtered.length
+              ? `Showing ${filtered.length} of ${sorted.length}`
+              : `Showing 0 of ${sorted.length}`;
+
+            const latest = filtered[0] || sorted[0] || null;
+          if (latest) {
+            $('latestScore').textContent = String(latest.health_score ?? latest.score ?? '--');
+            const latestScope = latest.scope_label || 'Full Audit';
+            $('latestMeta').textContent = `Last updated: ${new Date(latest.created_at || Date.now()).toLocaleString()} • ${latestScope}`;
+            $('viewLatestBtn').onclick = () => window.location.assign(`/audit/${latest.id}`);
+          } else {
+              $('latestScore').textContent = '--';
+              $('latestMeta').textContent = 'No audits yet.';
+              $('viewLatestBtn').onclick = null;
+            }
+
+            const avgScore = sorted.length
+              ? Math.round(
+                  sorted.reduce((sum, audit) => {
+                    const scoreValue = audit.health_score ?? audit.score ?? 0;
+                    return sum + Number(scoreValue || 0);
+                  }, 0) / sorted.length
+                )
+              : 0;
+            const completed = sorted.filter((audit) => String(audit.status || '').toLowerCase() === 'completed').length;
+            const latestPortal = latest ? String(latest.hubspot_portal_id || '') : '';
+            const latestAccount = latestPortal ? accountByPortal.get(latestPortal) : null;
+
+            $('summaryStats').innerHTML = `
+              <div class="card summaryStatCard">
+                <div class="summaryStatLabel">Total audits</div>
+                <div class="summaryStatValue">${escapeHtml(sorted.length)}</div>
+                <div class="summaryStatSub">All completed and pending runs</div>
+              </div>
+              <div class="card summaryStatCard">
+                <div class="summaryStatLabel">Average score</div>
+                <div class="summaryStatValue">${escapeHtml(avgScore || '--')}</div>
+                <div class="summaryStatSub">Across the current workspace</div>
+              </div>
+              <div class="card summaryStatCard">
+                <div class="summaryStatLabel">Completed</div>
+                <div class="summaryStatValue">${escapeHtml(completed)}</div>
+                <div class="summaryStatSub">Audits marked completed</div>
+              </div>
+              <div class="card summaryStatCard">
+                <div class="summaryStatLabel">Latest account</div>
+                <div class="summaryStatValue small">${escapeHtml(latestAccount ? labelFor(latestAccount) : 'n/a')}</div>
+                <div class="summaryStatSub">${escapeHtml(latestPortal || 'No portal selected')}</div>
+              </div>
+            `;
+
+            const tbody = $('auditsTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = filtered.length
+              ? filtered
+                  .map((audit) => {
+                    const account = accountByPortal.get(String(audit.hubspot_portal_id || ''));
+                    const owner = account ? labelFor(account) : `Portal ${audit.hubspot_portal_id || audit.id}`;
+                    const scoreValue = audit.health_score ?? audit.score ?? 0;
+                    const score = Number(scoreValue || 0);
+                    const status = String(audit.status || 'completed').toUpperCase();
+                    const tone = score >= 80 ? 'low' : score >= 60 ? 'medium' : 'high';
+                    const dateParts = formatDateTimeParts(audit.created_at);
+                    const scope = audit.scope_label || (Array.isArray(audit.scope) && audit.scope.length ? audit.scope.join(', ') : 'Full Audit');
+                    const critical = Number(audit.critical_issues || 0);
+                    const high = Number(audit.high_issues || 0);
+                    const sub = account && account.hubspot_portal_id ? `ID ${account.hubspot_portal_id}` : `Portal ${audit.hubspot_portal_id || audit.id}`;
+                    return `
+                      <tr>
+                        <td>
+                          <div class="dashboardAccountCell">
+                            <div class="dashboardAccountAvatar">${escapeHtml((owner[0] || 'H').toUpperCase())}</div>
+                            <div class="dashboardAccountText">
+                              <div class="dashboardAccountName">${escapeHtml(owner)}</div>
+                              <div class="muted dashboardAccountSub">${escapeHtml(sub)}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>${escapeHtml(scope)}</td>
+                        <td>
+                          <div class="dashboardDateCell">
+                            <div class="dashboardDateMain">${escapeHtml(dateParts.date)}</div>
+                            <div class="muted dashboardDateSub">${escapeHtml(dateParts.time)}</div>
+                          </div>
+                        </td>
+                        <td>${escapeHtml(score)}</td>
+                        <td>${escapeHtml(critical)}</td>
+                        <td>${escapeHtml(high)}</td>
+                        <td><span class="sev ${tone}">${escapeHtml(status)}</span></td>
+                        <td>
+                          <div class="auditActionStack">
+                            <a class="btnSecondary" style="display:inline-flex;align-items:center;justify-content:center" href="/audit/${escapeHtml(audit.id)}">View Result</a>
+                            <button class="btnSecondary" type="button" data-export-id="${escapeHtml(audit.id)}" data-export-format="pdf">Download PDF</button>
+                            <button class="btnSecondary" type="button" data-export-id="${escapeHtml(audit.id)}" data-export-format="csv">Download CSV</button>
+                          </div>
+                        </td>
+                        <td style="text-align:right">
+                          <button class="btnSecondary" type="button" data-re-run-id="${escapeHtml(audit.id)}">Re-run Audit</button>
+                        </td>
+                      </tr>
+                    `;
+                  })
+                  .join('')
+              : '<tr><td colspan="9" class="muted">No audit runs match your search.</td></tr>';
+
+            tbody.querySelectorAll('[data-export-id]').forEach((button) => {
+              button.addEventListener('click', async () => {
+                const auditId = button.getAttribute('data-export-id');
+                const format = button.getAttribute('data-export-format');
+                try {
+                  button.disabled = true;
+                  await downloadAuditExport(auditId, format);
+                } catch (error) {
+                  window.alert(error.message || 'Export failed');
+                } finally {
+                  button.disabled = false;
+                }
+              });
+            });
+
+            tbody.querySelectorAll('[data-re-run-id]').forEach((button) => {
+              button.addEventListener('click', () => {
+                window.location.assign(`/audit/${button.getAttribute('data-re-run-id')}`);
+              });
+            });
+          };
+
+          if (search) {
+            search.oninput = () => {
+              searchTerm = search.value || '';
+              render();
+            };
+          }
+
+          render();
+          } catch (error) {
+          const note = $('auditTableNote');
+          if (note) note.textContent = error.message || 'Could not load audit runs';
+          }
+        }
+
+        let auditsPageRefreshPromise = null;
+        function refreshAuditsPageFromServer() {
+          if (auditsPageRefreshPromise) return auditsPageRefreshPromise;
+          auditsPageRefreshPromise = loadAuditsPage().finally(() => {
+            auditsPageRefreshPromise = null;
+          });
+          return auditsPageRefreshPromise;
+        }
+
+        onDataChange((detail = {}) => {
+          const changeType = String(detail.type || '').toLowerCase();
+          if (
+            changeType === 'accounts:updated' ||
+            changeType === 'audits:updated' ||
+            changeType === 'audit:updated' ||
+            changeType === 'profile:updated'
+          ) {
+            refreshAuditsPageFromServer();
+          }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
+            refreshAuditsPageFromServer();
+          }
+        });
+
+        await loadAuditsPage();
+
+        window.HubSpotAuditUI.setAppReady();
+      });
+    </script>
+  </body>
+</html>
